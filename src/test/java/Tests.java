@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -34,6 +35,42 @@ public class Tests {
     @AfterEach
     public void finalizeTest() {
         System.out.println("Test complete:" + (System.nanoTime() - testStartTime));
+    }
+
+    @Test
+    public void correctReadListFromJson(){
+        // given:
+        String jsonString = getJSONString();
+        List<Employee> correctList = getCorrectEmployeeList();
+        // when:
+        List<Employee> listFromJSON = WorkWithFiles.jsonToList(jsonString);
+        // then:
+        assertThat(listFromJSON, equalTo(correctList));
+    }
+
+    @Test
+    public void correctCreateJSONFromList(){
+        // given:
+        String correctJsonString = getJSONString();
+        List<Employee> correctList = getCorrectEmployeeList();
+        // when:
+        String jsonFromList = WorkWithFiles.listToJson(correctList);
+        // then:
+        assertThat(jsonFromList, equalTo(correctJsonString));
+    }
+
+    @Test
+    public void correctWriteFile(){
+        // given:
+        String fileName = "TestFile.json";
+        String jsonString = getJSONString();
+        // when:
+        WorkWithFiles.writeString(jsonString, fileName);
+        // then:
+        File file = new File(fileName);
+        assertThat(file.exists(), equalTo(true));
+        assertThat(WorkWithFiles.readString(fileName), equalTo(jsonString));
+        file.delete();
     }
 
     @ParameterizedTest
@@ -132,5 +169,10 @@ public class Tests {
         list.add(new Employee(1, "John", "Smith", "USA", 25));
         list.add(new Employee(2, "Ivan", "Petrov", "RU", 23));
         return list;
+    }
+
+    private String getJSONString() {
+        return "[{\"id\":1,\"firstName\":\"John\",\"lastName\":\"Smith\",\"country\":\"USA\",\"age\":25}," +
+                "{\"id\":2,\"firstName\":\"Ivan\",\"lastName\":\"Petrov\",\"country\":\"RU\",\"age\":23}]";
     }
 }
