@@ -2,6 +2,9 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -39,7 +42,7 @@ public class Tests {
         // given:
         File file = new File(fileName);
         // expect:
-        Assertions.assertTrue(file.exists());
+        assertThat(file.exists(), equalTo(true));
     }
 
     @ParameterizedTest
@@ -63,7 +66,10 @@ public class Tests {
                 break;
         }
 
-        Assertions.assertEquals(result, fileData);
+        //Hamcrest
+        assertThat(result, MyStringMatcher.containJohnAndIvan());
+
+        assertThat(result, equalTo(fileData));
 
     }
 
@@ -114,7 +120,11 @@ public class Tests {
         correctList.sort(lambda);
         listFromFile.sort(lambda);
 
-        Assertions.assertEquals(correctList, listFromFile);
+        //Hamcrest
+        assertThat(listFromFile, is(not(empty())));
+        assertThat(listFromFile, hasSize(2));
+
+        assertThat(listFromFile, equalTo(correctList));
     }
 
     private List<Employee> getCorrectEmployeeList() {
